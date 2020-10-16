@@ -1,0 +1,72 @@
+<!-- <div class="news-btn-div" data-tab="news-2" onclick="req1()">Кнопка</div> -->
+<style>
+    .containerchild{
+        float : left;
+        border: 3px solid #000;
+        margin: 5px;
+        width: 300px;
+        height: 400px;
+    }
+    .titleP{
+        text-align: center;
+    }
+</style>
+<p><b>Введите ID альбома:</b></p>
+<input type="number" id = "valueId" value="1">
+<button onclick="req1()">Кнопка</button>
+    <div id="container" class="container">
+        
+    </div>
+<script>
+    function ajax_get(url, callback) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            //console.log('responseText:' + xmlhttp.responseText);
+            try {
+                var data = JSON.parse(xmlhttp.responseText);
+            } catch(err) {
+                console.log(err.message + " in " + xmlhttp.responseText);
+                return;
+            }
+            callback(data);
+        }
+    };
+    xmlhttp.open("GET", url, false);
+    xmlhttp.send();
+}
+    function req1() {
+    var parent = document.getElementById('container');
+    if(parent.childNodes.length>1) { 
+        while (parent.firstChild) {
+            parent.removeChild(parent.firstChild);
+        }
+     }
+    var number = document.getElementById('valueId').value; //получаем значение input'a ( id альбома )
+    number != "" ? number = "?id="+number : "";
+    ajax_get('https://jsonplaceholder.typicode.com/albums'+number, function(data) {
+        for(var item in data)
+        {
+            var idAlbum = data[item].id
+            var srcimg = "";
+            ajax_get('https://jsonplaceholder.typicode.com/photos?albumId='+idAlbum, function(data) {
+                srcimg = data[0].url;
+            });
+            var div = document.createElement('div');
+            div.className  = "containerchild";
+            div.id = "containerchild" 
+            var image = new Image();
+            image.src = srcimg;
+            image.width = 300;
+            image.height = 300;
+            var p = document.createElement('p');
+            p.className = "titleP"
+            p.innerHTML = data[item].title;
+            div.appendChild(image);
+            div.appendChild(p);
+            parent.appendChild(div);
+        }
+    });
+   
+}
+</script>
