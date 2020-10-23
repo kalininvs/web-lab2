@@ -35,7 +35,7 @@
             callback(data);
         }
     };
-    xmlhttp.open("GET", url, true);
+    xmlhttp.open("GET", url, false);
     xmlhttp.send();
 }
     function req1() {
@@ -46,11 +46,15 @@
         }
     }
     var number = document.getElementById('valueId').value != "" ? "?id="+document.getElementById('valueId').value : "";
+    console.log(number);
     ajax_get('https://jsonplaceholder.typicode.com/albums'+number, function(data) {
+        
         for(var item in data)
         {
+            console.log(data[item]);
             var idAlbum = data[item].id
             var srcimg = "";
+            var title = data[item].title;
             ajax_get('https://jsonplaceholder.typicode.com/photos?albumId='+idAlbum, function(data) {
                 srcimg = data[0].url;
                 var div = document.createElement('div');
@@ -61,7 +65,7 @@
                 image.className = "imagechild";
                 var p = document.createElement('p');
                 p.className = "titleP"
-                p.innerHTML = data[item].title;
+                p.innerHTML = title;
                 div.appendChild(image);
                 div.appendChild(p);
                 parent.appendChild(div);
